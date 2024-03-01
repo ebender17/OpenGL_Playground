@@ -6,31 +6,15 @@
 #include <string>
 #include <sstream>
 
-#ifdef DEBUG
-    #define ASSERT(x) if (!(x)) __debugbreak();
-    #define GLCall(x) GLClearError();\
-        x;\
-        ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#else
-    #define ASSERT(x) x
-    #define GLCall(x) x
-#endif
+#include "Renderer.h"
+#include "Display.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
-static void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
-}
 
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-    while (GLenum error = glGetError())
-    {
-        std::cout << "[OpenGL Error] (" << error << "): " << function <<
-            " " << file << ": " << line << "\n";
-        return false;
-    }
-    return true;
-}
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGHT = 600;
+
 
 struct ShaderProgramSource
 {
@@ -112,23 +96,9 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 int main(void)
 {
-    GLFWwindow* window;
-
-    if (!glfwInit())
+    Display display(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL Playground");
+    if (!display.Setup())
         return -1;
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
 
     glfwSwapInterval(1);
 
@@ -159,18 +129,12 @@ int main(void)
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao));
 
-    unsigned int buffer;
-    GLCall(glGenBuffers(1, &buffer));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 2, (const void*)0));
 
-    unsigned int ibo;
-    GLCall(glGenBuffers(1, &ibo));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+    IndexBuffer ib(indices, 6);
 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
@@ -187,7 +151,7 @@ int main(void)
 
     float r = 0.0f;
     float increment = 0.05f;
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(display.GetWindow()))
     {
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -195,6 +159,7 @@ int main(void)
         GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 
         GLCall(glBindVertexArray(vao));
+        // need to call ib.Bind()?
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
@@ -205,13 +170,12 @@ int main(void)
 
         r += increment;
 
-        GLCall(glfwSwapBuffers(window));
+        GLCall(glfwSwapBuffers(display.GetWindow()));
 
         GLCall(glfwPollEvents());
     }
 
     GLCall(glDeleteProgram(shader));
 
-    glfwTerminate();
     return 0;
 }
