@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "Renderer.h"
+#include "GLErrorManager.h"
 
 Shader::Shader(const std::string& filepath)
     : m_FilePath(filepath), m_RendererID(0)

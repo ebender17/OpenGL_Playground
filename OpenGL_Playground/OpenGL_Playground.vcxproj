@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GLErrorManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Display.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
@@ -171,6 +172,7 @@
     <None Include="res\shaders\Basic.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GLErrorManager.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Display.h" />
     <ClInclude Include="src\IndexBuffer.h" />
