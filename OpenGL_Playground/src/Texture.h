@@ -5,7 +5,11 @@
 class Texture
 {
 public:
+	static constexpr float DEFAULT_BORDER_COLOR[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+public:
 	Texture(const std::string& path);
+	Texture(const std::string& path, bool generateMipMaps, unsigned int minFilter, unsigned int maxFilter, 
+		unsigned int wrapModeS, unsigned int wrapModeT, const float* borderColor = DEFAULT_BORDER_COLOR);
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;

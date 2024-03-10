@@ -63,7 +63,7 @@ int main(void)
     shader.Bind();
     shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-    Texture texture("res/textures/character-sprite.png");
+    Texture texture("res/textures/character-sprite.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     texture.Bind(); // bound to slot 0
     shader.SetUniform1i("u_Texture", 0);
 
