@@ -89,6 +89,11 @@ int main(void)
         shader.Bind();
         shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        shader.SetUniformMat4f("u_Transform", trans);
+
         renderer.Draw(va, ib, shader);
 
         if (r > 1.0f)
