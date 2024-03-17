@@ -5,6 +5,7 @@
 #include <string>
 
 #include "GLErrorManager.h"
+#include "Camera.h"
 #include "Renderer.h"
 #include "Display.h"
 #include "VertexBuffer.h"
@@ -19,13 +20,30 @@
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
+void processInput(GLFWwindow* window);
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = SCREEN_WIDTH / 2.0f;
+float lastY = SCREEN_HEIGHT / 2.0f;
+bool firstMouse = true;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 int main(void)
 {
     Display display(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL Playground");
     if (!display.Setup())
         return -1;
 
+    // More this to display class?
     glfwSwapInterval(1);
+    glfwSetFramebufferSizeCallback(display.GetWindow(), framebuffer_size_callback);
+    glfwSetCursorPosCallback(display.GetWindow(), mouse_callback);
+    glfwSetScrollCallback(display.GetWindow(), scroll_callback);
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
@@ -50,6 +68,7 @@ int main(void)
         2, 3, 0
     };
 
+    GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
@@ -62,14 +81,11 @@ int main(void)
 
     IndexBuffer ib(indices, 6);
 
-    glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // 4:3 aspect ratio
-
     Shader shader("res/shaders/Basic.shader");
     shader.Bind();
-    shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-    shader.SetUniformMat4f("u_MVP", projection);
+    // shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-    Texture texture("res/textures/character-sprite.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    Texture texture("res/textures/wooden-box.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     texture.Bind(); // bound to slot 0
     shader.SetUniform1i("u_Texture", 0);
 
@@ -80,28 +96,37 @@ int main(void)
 
     Renderer renderer;
 
-    float r = 0.0f;
-    float increment = 0.05f;
+    // float r = 0.0f;
+    // float increment = 0.05f;
     while (!glfwWindowShouldClose(display.GetWindow()))
     {
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        processInput(display.GetWindow());
+
         renderer.Clear();
 
         shader.Bind();
-        shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+        // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        shader.SetUniformMat4f("u_Transform", trans);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), 0.1f, 100.0f);
+        glm::mat4 mvp = projection * view * model;
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         renderer.Draw(va, ib, shader);
 
-        if (r > 1.0f)
+        /* if (r > 1.0f)
             increment = -0.05f;
         else if (r < 0.0f)
             increment = 0.05f;
 
-        r += increment;
+        r += increment; */
 
         GLCall(glfwSwapBuffers(display.GetWindow()));
 
@@ -109,4 +134,48 @@ int main(void)
     }
 
     return 0;
+}
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(CameraMovement::Forward, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(CameraMovement::Backward, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(CameraMovement::Left, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(CameraMovement::Right, deltaTime);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
+{
+    float xPos = static_cast<float>(xPosIn);
+    float yPos = static_cast<float>(yPosIn);
+
+    if (firstMouse)
+    {
+        lastX = xPos;
+        lastY = yPos;
+        firstMouse = false;
+    }
+
+    float xOffset = xPos - lastX;
+    float yOffset = lastY - yPos; // Reversed since y-coordinates go from bottom to top
+    lastX = xPos;
+    lastY = yPos;
+    camera.ProcessMouseMovement(xOffset, yOffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    camera.ProcessMouseScroll(static_cast<float>(yOffset));
 }
