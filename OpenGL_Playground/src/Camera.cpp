@@ -39,6 +39,7 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 	}
 }
 
+// TODO : Look into using Quaternions
 void Camera::ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch)
 {
 	xOffset *= m_MouseSensitivity;

@@ -39,11 +39,10 @@ int main(void)
     if (!display.Setup())
         return -1;
 
-    // More this to display class?
-    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(display.GetWindow(), framebuffer_size_callback);
     glfwSetCursorPosCallback(display.GetWindow(), mouse_callback);
     glfwSetScrollCallback(display.GetWindow(), scroll_callback);
+    glfwSetInputMode(display.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
@@ -136,6 +135,7 @@ int main(void)
     return 0;
 }
 
+// TODO : Move to input class
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
