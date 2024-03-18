@@ -28,5 +28,6 @@ bool Display::Setup()
     }
 
     glfwMakeContextCurrent(m_Window);
+    glfwSwapInterval(1);
     return true;
 }

@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\GLErrorManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Display.cpp" />
@@ -313,6 +314,7 @@
     <None Include="src\vendor\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\GLErrorManager.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Display.h" />
@@ -614,6 +616,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\character-sprite.png" />
+    <Image Include="res\textures\wooden-box.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
