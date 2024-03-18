@@ -110,11 +110,9 @@ int main(void)
         shader.Bind();
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), 0.1f, 100.0f);
         glm::mat4 mvp = projection * view * model;
         shader.SetUniformMat4f("u_MVP", mvp);
 
