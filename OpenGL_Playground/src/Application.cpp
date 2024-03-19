@@ -17,8 +17,12 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-const unsigned int SCREEN_WIDTH = 800;
-const unsigned int SCREEN_HEIGHT = 600;
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+unsigned int screenWidth = 800;
+unsigned int screenHeight = 600;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xPos, double yPos);
@@ -26,8 +30,8 @@ void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-float lastX = SCREEN_WIDTH / 2.0f;
-float lastY = SCREEN_HEIGHT / 2.0f;
+float lastX = screenWidth / 2.0f;
+float lastY = screenHeight / 2.0f;
 bool firstMouse = true;
 
 float deltaTime = 0.0f;
@@ -35,14 +39,15 @@ float lastFrame = 0.0f;
 
 int main(void)
 {
-    Display display(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL Playground");
+    Display display(screenWidth, screenHeight, "OpenGL Playground");
     if (!display.Setup())
         return -1;
 
-    glfwSetFramebufferSizeCallback(display.GetWindow(), framebuffer_size_callback);
-    glfwSetCursorPosCallback(display.GetWindow(), mouse_callback);
-    glfwSetScrollCallback(display.GetWindow(), scroll_callback);
-    glfwSetInputMode(display.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    GLFWwindow* window = display.GetWindow();
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // glfwSetCursorPosCallback(window, mouse_callback);
+    // glfwSetScrollCallback(window, scroll_callback);
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
@@ -95,24 +100,44 @@ int main(void)
 
     Renderer renderer;
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 330";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui::StyleColorsDark();
+
     // float r = 0.0f;
     // float increment = 0.05f;
-    while (!glfwWindowShouldClose(display.GetWindow()))
+
+    float degrees = 0.0f;
+
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    while (!glfwWindowShouldClose(window))
     {
+        renderer.Clear(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        processInput(display.GetWindow());
-
-        renderer.Clear();
+        processInput(window);
 
         shader.Bind();
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degrees), glm::vec3(1.0f, 0.0f, 0.0f));
         glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
         glm::mat4 mvp = projection * view * model;
         shader.SetUniformMat4f("u_MVP", mvp);
 
@@ -125,10 +150,30 @@ int main(void)
 
         r += increment; */
 
-        GLCall(glfwSwapBuffers(display.GetWindow()));
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin("ImGui Window");
+
+            ImGui::SliderFloat("Rotation Pitch", &degrees, 0.0f, 360.0f);
+            ImGui::ColorEdit3("Clear color", (float*)&clear_color);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+        }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        GLCall(glfwSwapBuffers(window));
 
         GLCall(glfwPollEvents());
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     return 0;
 }
@@ -151,6 +196,8 @@ void processInput(GLFWwindow* window)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    screenWidth = width;
+    screenHeight = height;
     glViewport(0, 0, width, height);
 }
 

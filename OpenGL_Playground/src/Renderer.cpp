@@ -2,9 +2,9 @@
 
 #include "GLErrorManager.h"
 
-void Renderer::Clear() const
+void Renderer::Clear(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) const
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(red, green, blue, alpha);
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
