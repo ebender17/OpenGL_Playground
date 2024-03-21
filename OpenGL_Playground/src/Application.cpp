@@ -114,7 +114,10 @@ int main(void)
     // float r = 0.0f;
     // float increment = 0.05f;
 
-    float degrees = 0.0f;
+    float degreesA = 0.0f;
+    float degreesB = 0.0f;
+    glm::vec3 translationA(1.0, 1.0, 0);
+    glm::vec3 translationB(0.0, 0.0, 0);
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -132,16 +135,27 @@ int main(void)
         lastFrame = currentFrame;
         processInput(window);
 
-        shader.Bind();
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degrees), glm::vec3(1.0f, 0.0f, 0.0f));
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
-        glm::mat4 mvp = projection * view * model;
-        shader.SetUniformMat4f("u_MVP", mvp);
+        
+        shader.Bind();
+        {
+            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesA), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::translate(model, translationA);
+            glm::mat4 mvp = projection * view * model;
+            shader.SetUniformMat4f("u_MVP", mvp);
+            renderer.Draw(va, ib, shader);
+        }
 
-        renderer.Draw(va, ib, shader);
+        {
+            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesB), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::translate(model, translationB);
+            glm::mat4 mvp = projection * view * model;
+            shader.SetUniformMat4f("u_MVP", mvp);
+            renderer.Draw(va, ib, shader);
+        }
 
         /* if (r > 1.0f)
             increment = -0.05f;
@@ -156,7 +170,10 @@ int main(void)
 
             ImGui::Begin("ImGui Window");
 
-            ImGui::SliderFloat("Rotation Pitch", &degrees, 0.0f, 360.0f);
+            ImGui::SliderFloat3("Translation A", &translationA.x, -1.0f, 1.0f);
+            ImGui::SliderFloat3("Translation B", &translationB.x, -1.0f, 1.0f);
+            ImGui::SliderFloat("Rotation Pitch A", &degreesA, 0.0f, 360.0f);
+            ImGui::SliderFloat("Rotation Pitch B", &degreesB, 0.0f, 360.0f);
             ImGui::ColorEdit3("Clear color", (float*)&clear_color);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
