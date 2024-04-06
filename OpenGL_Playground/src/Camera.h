@@ -27,6 +27,7 @@ public:
 	void ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch = true);
 	void ProcessMouseScroll(float yOffset);
 
+	inline glm::vec3 GetPosition() const { return m_Position; }
 	inline float GetZoom() const { return m_Zoom; }
 private:
 	void UpdateCameraVectors();
