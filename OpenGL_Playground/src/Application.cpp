@@ -29,7 +29,7 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void processInput(GLFWwindow* window);
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
 float lastX = screenWidth / 2.0f;
 float lastY = screenHeight / 2.0f;
 bool firstMouse = true;
@@ -45,8 +45,8 @@ int main(void)
 
     GLFWwindow* window = display.GetWindow();
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    // glfwSetCursorPosCallback(window, mouse_callback);
-    // glfwSetScrollCallback(window, scroll_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     GLenum err = glewInit();
@@ -60,7 +60,8 @@ int main(void)
         std::cout << "Status: Using OpenGL " << glGetString(GL_VERSION) << "\n";
     }
 
-    float vertices[] = {
+    // Old stuff
+    /* float vertices[] = {
         -0.5f, -0.5f, 0.0f, 0.0f,
          0.5f, -0.5f, 1.0f, 0.0f,
          0.5f, 0.5f, 1.0f, 1.0f,
@@ -70,14 +71,59 @@ int main(void)
     unsigned int indices[] = {
         0, 1, 2,
         2, 3, 0
+    }; */
+
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    VertexArray va;
-    VertexBuffer vb(vertices, 4 * 4 * sizeof(float));
+    // Old stuff
+    /* VertexArray va;
+    VertexBuffer vb(vertices, 4 * 4 * sizeof(float), GL_STATIC_DRAW);
     VertexBufferLayout layout;
     layout.Push<float>(2);
     layout.Push<float>(2);
@@ -96,7 +142,23 @@ int main(void)
     va.Unbind();
     vb.Unbind();
     ib.Unbind();
-    shader.Unbind();
+    shader.Unbind(); */
+
+    Shader lightingShader("res/shaders/BasicLighting.shader");
+    Shader lightCubeShader("res/shaders/LightCube.shader");
+    glm::vec3 lightColorA(1.0f, 1.0f, 1.0f);
+    glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
+
+    VertexArray cubeVA;
+    VertexBuffer vb(vertices, sizeof(vertices), GL_STATIC_DRAW);
+    
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    layout.Push<float>(3);
+    cubeVA.AddBuffer(vb, layout);
+    
+    VertexArray lightCubeVA;
+    lightCubeVA.AddBuffer(vb, layout);
 
     Renderer renderer;
 
@@ -114,6 +176,8 @@ int main(void)
     // float r = 0.0f;
     // float increment = 0.05f;
 
+    glm::vec3 lightPos(0.0f, 1.2f, 1.2f);
+
     float degreesA = 0.0f;
     float degreesB = 0.0f;
     glm::vec3 translationA(1.0, 1.0, 0);
@@ -121,11 +185,11 @@ int main(void)
 
     bool show_demo_window = true;
     bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
     while (!glfwWindowShouldClose(window))
     {
         renderer.Clear(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-
+        
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -135,27 +199,40 @@ int main(void)
         lastFrame = currentFrame;
         processInput(window);
 
+        lightPos.y = 1.5f * sin(glfwGetTime());
+        lightPos.z = 1.5f * cos(glfwGetTime());
+
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
+        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat3 normalWorld = glm::mat3(1.0f);
+        normalWorld = glm::transpose(glm::inverse(model));
         
-        shader.Bind();
-        {
-            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesA), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::translate(model, translationA);
-            glm::mat4 mvp = projection * view * model;
-            shader.SetUniformMat4f("u_MVP", mvp);
-            renderer.Draw(va, ib, shader);
-        }
+        // TODO : Pre-multiply matrices needed in shader instead of doing in shader
+        lightingShader.Bind();
+        lightingShader.SetUniformMat4f("u_Projection", projection);
+        lightingShader.SetUniformMat4f("u_View", view);
+        lightingShader.SetUniformMat4f("u_Model", model);
+        lightingShader.SetUniformMat3f("u_NormalWorld", normalWorld);
+        lightingShader.SetUniformVec3f("u_ObjectColor", objectColor);
+        lightingShader.SetUniformVec3f("u_LightColor", lightColorA);
+        lightingShader.SetUniformVec3f("u_LightPos", lightPos);
+        lightingShader.SetUniformVec3f("u_ViewPos", camera.GetPosition());
 
-        {
-            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesB), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::translate(model, translationB);
-            glm::mat4 mvp = projection * view * model;
-            shader.SetUniformMat4f("u_MVP", mvp);
-            renderer.Draw(va, ib, shader);
-        }
+        renderer.Draw(cubeVA, 0, 36, lightingShader);
+
+        lightCubeShader.Bind();
+        lightCubeShader.SetUniformMat4f("u_Projection", projection);
+        lightCubeShader.SetUniformMat4f("u_View", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lightCubeShader.SetUniformMat4f("u_Model", model);
+        lightCubeShader.SetUniformVec3f("u_Color", lightColorA);
+
+        renderer.Draw(lightCubeVA, 0, 36, lightCubeShader);
 
         /* if (r > 1.0f)
             increment = -0.05f;
@@ -170,11 +247,8 @@ int main(void)
 
             ImGui::Begin("ImGui Window");
 
-            ImGui::SliderFloat3("Translation A", &translationA.x, -1.0f, 1.0f);
-            ImGui::SliderFloat3("Translation B", &translationB.x, -1.0f, 1.0f);
-            ImGui::SliderFloat("Rotation Pitch A", &degreesA, 0.0f, 360.0f);
-            ImGui::SliderFloat("Rotation Pitch B", &degreesB, 0.0f, 360.0f);
-            ImGui::ColorEdit3("Clear color", (float*)&clear_color);
+            ImGui::ColorEdit3("Object color", (float*)&objectColor[0]);
+            ImGui::ColorEdit3("Light color", (float*)&lightColorA[0]);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
@@ -187,7 +261,6 @@ int main(void)
 
         GLCall(glfwPollEvents());
     }
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
