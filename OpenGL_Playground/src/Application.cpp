@@ -148,7 +148,6 @@ int main(void)
     Shader lightCubeShader("res/shaders/LightCube.shader");
     glm::vec3 lightColorA(1.0f, 1.0f, 1.0f);
     glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
-    // TODO : set uniforms that do not need to be set every render call
 
     VertexArray cubeVA;
     VertexBuffer vb(vertices, sizeof(vertices), GL_STATIC_DRAW);
@@ -208,12 +207,15 @@ int main(void)
         glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
+        glm::mat3 normalWorld = glm::mat3(1.0f);
+        normalWorld = glm::transpose(glm::inverse(model));
         
+        // TODO : Pre-multiply matrices needed in shader instead of doing in shader
         lightingShader.Bind();
-        // TODO : multiply matrices need in shader instead of doing in shader
         lightingShader.SetUniformMat4f("u_Projection", projection);
         lightingShader.SetUniformMat4f("u_View", view);
         lightingShader.SetUniformMat4f("u_Model", model);
+        lightingShader.SetUniformMat3f("u_NormalWorld", normalWorld);
         lightingShader.SetUniformVec3f("u_ObjectColor", objectColor);
         lightingShader.SetUniformVec3f("u_LightColor", lightColorA);
         lightingShader.SetUniformVec3f("u_LightPos", lightPos);
@@ -232,24 +234,6 @@ int main(void)
 
         renderer.Draw(lightCubeVA, 0, 36, lightCubeShader);
 
-        // TODO : old code
-        /* shader.Bind();
-        {
-            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesA), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::translate(model, translationA);
-            glm::mat4 mvp = projection * view * model;
-            shader.SetUniformMat4f("u_MVP", mvp);
-            renderer.Draw(va, ib, shader);
-        }
-
-        {
-            glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(degreesB), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::translate(model, translationB);
-            glm::mat4 mvp = projection * view * model;
-            shader.SetUniformMat4f("u_MVP", mvp);
-            renderer.Draw(va, ib, shader);
-        } */
-
         /* if (r > 1.0f)
             increment = -0.05f;
         else if (r < 0.0f)
@@ -257,7 +241,6 @@ int main(void)
 
         r += increment; */
 
-        // TODO : left off here
         {
             static float f = 0.0f;
             static int counter = 0;
