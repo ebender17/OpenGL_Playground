@@ -21,6 +21,9 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "tests/Test.h"
+#include "tests/TestClearColor.h"
+
 unsigned int screenWidth = 800;
 unsigned int screenHeight = 600;
 
@@ -60,7 +63,7 @@ int main(void)
         std::cout << "Status: Using OpenGL " << glGetString(GL_VERSION) << "\n";
     }
 
-    // Old stuff
+    // TODO : Old stuff
     /* float vertices[] = {
         -0.5f, -0.5f, 0.0f, 0.0f,
          0.5f, -0.5f, 1.0f, 0.0f,
@@ -121,7 +124,7 @@ int main(void)
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-    // Old stuff
+    // TODO : Old stuff
     /* VertexArray va;
     VertexBuffer vb(vertices, 4 * 4 * sizeof(float), GL_STATIC_DRAW);
     VertexBufferLayout layout;
@@ -144,7 +147,8 @@ int main(void)
     ib.Unbind();
     shader.Unbind(); */
 
-    Shader lightingShader("res/shaders/BasicLighting.shader");
+    // TODO : Move to lighting test
+    /* Shader lightingShader("res/shaders/BasicLighting.shader");
     Shader lightCubeShader("res/shaders/LightCube.shader");
     glm::vec3 lightColorA(1.0f, 1.0f, 1.0f);
     glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
@@ -158,7 +162,7 @@ int main(void)
     cubeVA.AddBuffer(vb, layout);
     
     VertexArray lightCubeVA;
-    lightCubeVA.AddBuffer(vb, layout);
+    lightCubeVA.AddBuffer(vb, layout); */
 
     Renderer renderer;
 
@@ -176,19 +180,22 @@ int main(void)
     // float r = 0.0f;
     // float increment = 0.05f;
 
+    // TODO : Move to lighting test
     glm::vec3 lightPos(0.0f, 1.2f, 1.2f);
-
-    float degreesA = 0.0f;
-    float degreesB = 0.0f;
-    glm::vec3 translationA(1.0, 1.0, 0);
-    glm::vec3 translationB(0.0, 0.0, 0);
 
     bool show_demo_window = true;
     bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+
+    test::Test* currentTest = nullptr;
+    test::TestMenu* testMenu = new test::TestMenu(currentTest);
+    currentTest = testMenu;
+
+    testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+
     while (!glfwWindowShouldClose(window))
     {
-        renderer.Clear(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        renderer.SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        renderer.Clear();
         
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -199,7 +206,22 @@ int main(void)
         lastFrame = currentFrame;
         processInput(window);
 
-        lightPos.y = 1.5f * sin(glfwGetTime());
+        if (currentTest)
+        {
+            currentTest->OnUpdate(deltaTime);
+            currentTest->OnRender();
+            ImGui::Begin("Test");
+            if (currentTest != testMenu && ImGui::Button("<-"))
+            {
+                delete currentTest;
+                currentTest = testMenu;
+            }
+            currentTest->OnImGuiRender();
+            ImGui::End();
+        }
+
+        // TODO : move to lighting test
+        /* lightPos.y = 1.5f * sin(glfwGetTime());
         lightPos.z = 1.5f * cos(glfwGetTime());
 
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
@@ -232,7 +254,7 @@ int main(void)
         lightCubeShader.SetUniformMat4f("u_Model", model);
         lightCubeShader.SetUniformVec3f("u_Color", lightColorA);
 
-        renderer.Draw(lightCubeVA, 0, 36, lightCubeShader);
+        renderer.Draw(lightCubeVA, 0, 36, lightCubeShader); */
 
         /* if (r > 1.0f)
             increment = -0.05f;
@@ -241,7 +263,8 @@ int main(void)
 
         r += increment; */
 
-        {
+        // TODO : Move to lighting test
+        /* {
             static float f = 0.0f;
             static int counter = 0;
 
@@ -252,7 +275,7 @@ int main(void)
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
-        }
+        } */ 
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -261,6 +284,10 @@ int main(void)
 
         GLCall(glfwPollEvents());
     }
+
+    delete currentTest; 
+    if (currentTest != testMenu)
+        delete testMenu;
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
