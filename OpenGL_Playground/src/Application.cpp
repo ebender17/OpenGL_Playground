@@ -147,6 +147,7 @@ int main(void)
     Shader lightingShader("res/shaders/BasicLighting.shader");
     Shader lightCubeShader("res/shaders/LightCube.shader");
     glm::vec3 lightColorA(1.0f, 1.0f, 1.0f);
+    glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
     // TODO : set uniforms that do not need to be set every render call
 
     VertexArray cubeVA;
@@ -162,8 +163,7 @@ int main(void)
 
     Renderer renderer;
 
-    // TODO : enable again
-    /* IMGUI_CHECKVERSION();
+    IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
@@ -172,12 +172,12 @@ int main(void)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char* glsl_version = "#version 330";
     ImGui_ImplOpenGL3_Init(glsl_version);
-    ImGui::StyleColorsDark(); */
+    ImGui::StyleColorsDark();
 
     // float r = 0.0f;
     // float increment = 0.05f;
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::vec3 lightPos(0.0f, 1.2f, 1.2f);
 
     float degreesA = 0.0f;
     float degreesB = 0.0f;
@@ -191,15 +191,17 @@ int main(void)
     {
         renderer.Clear(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         
-        // TODO
-        /* ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame(); */
+        ImGui::NewFrame();
 
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         processInput(window);
+
+        lightPos.y = 1.5f * sin(glfwGetTime());
+        lightPos.z = 1.5f * cos(glfwGetTime());
 
         // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
@@ -212,7 +214,7 @@ int main(void)
         lightingShader.SetUniformMat4f("u_Projection", projection);
         lightingShader.SetUniformMat4f("u_View", view);
         lightingShader.SetUniformMat4f("u_Model", model);
-        lightingShader.SetUniformVec3f("u_ObjectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+        lightingShader.SetUniformVec3f("u_ObjectColor", objectColor);
         lightingShader.SetUniformVec3f("u_LightColor", lightColorA);
         lightingShader.SetUniformVec3f("u_LightPos", lightPos);
         lightingShader.SetUniformVec3f("u_ViewPos", camera.GetPosition());
@@ -255,34 +257,30 @@ int main(void)
 
         r += increment; */
 
-        // TODO
-        /* {
+        // TODO : left off here
+        {
             static float f = 0.0f;
             static int counter = 0;
 
             ImGui::Begin("ImGui Window");
 
-            ImGui::SliderFloat3("Translation A", &translationA.x, -1.0f, 1.0f);
-            ImGui::SliderFloat3("Translation B", &translationB.x, -1.0f, 1.0f);
-            ImGui::SliderFloat("Rotation Pitch A", &degreesA, 0.0f, 360.0f);
-            ImGui::SliderFloat("Rotation Pitch B", &degreesB, 0.0f, 360.0f);
-            ImGui::ColorEdit3("Clear color", (float*)&clear_color);
+            ImGui::ColorEdit3("Object color", (float*)&objectColor[0]);
+            ImGui::ColorEdit3("Light color", (float*)&lightColorA[0]);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
         }
 
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());  */
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         GLCall(glfwSwapBuffers(window));
 
         GLCall(glfwPollEvents());
     }
-    // TODO
-    /* ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext(); */
+    ImGui::DestroyContext();
 
     return 0;
 }
