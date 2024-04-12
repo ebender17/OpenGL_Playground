@@ -8,11 +8,6 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "Display.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Texture.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -25,8 +20,6 @@
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 #include "tests/TestBasicLighting.h"
-
-// TODO : clean-up includes
 
 unsigned int screenWidth = 800;
 unsigned int screenHeight = 600;
@@ -51,7 +44,6 @@ int main(void)
         return -1;
 
     GLFWwindow* window = display.GetWindow();
-    // TODO - add controls to some tests
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
@@ -80,10 +72,6 @@ int main(void)
     const char* glsl_version = "#version 330";
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::StyleColorsDark();
-
-    // TODO
-    // float r = 0.0f;
-    // float increment = 0.05f;
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -123,14 +111,6 @@ int main(void)
             currentTest->OnImGuiRender();
             ImGui::End();
         }
-
-        // TODO
-        /* if (r > 1.0f)
-            increment = -0.05f;
-        else if (r < 0.0f)
-            increment = 0.05f;
-
-        r += increment; */
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

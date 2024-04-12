@@ -28,8 +28,7 @@ namespace test {
 		std::unique_ptr<Shader> m_Shader;
 		std::unique_ptr<Texture> m_Texture;
 
-		glm::mat4 m_Proj, m_View;
-		glm::vec3 m_TranslationA, m_TranslationB;
+		glm::vec3 m_TranslationA, m_TranslationB, m_ColorA, m_ColorB;
 	};
 
 }

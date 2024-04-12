@@ -9,8 +9,7 @@
 namespace test {
 
 	TestTexture2D::TestTexture2D()
-		: m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f),
-			glm::vec3(0, 0, 0))), m_TranslationA(200, 200, 0), m_TranslationB(400, 200, 0)
+		: m_TranslationA(200, 200, 0), m_TranslationB(400, 200, 0), m_ColorA(1.0f, 1.0f, 1.0f), m_ColorB(1.0f, 1.0f, 1.0f)
 	{
 		float vertices[] = {
 			-0.5f, -0.5f, 0.0f, 0.0f,
@@ -24,7 +23,6 @@ namespace test {
 			2, 3, 0
 		};
 
-		// TODO - left off here
 		// TODO : setup parameters whether to blend or not
 		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glEnable(GL_BLEND));
@@ -41,8 +39,6 @@ namespace test {
 
 		m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
 		m_Shader->Bind();
-		// TODO : setup color in shader + add to ImGUI
-		// shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 		m_Texture = std::make_unique<Texture>("res/textures/wooden-box.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		m_Shader->SetUniform1i("u_Texture", 0);
 	}
@@ -63,27 +59,34 @@ namespace test {
 		Renderer renderer;
 		m_Texture->Bind();
 
+		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
+
 		{
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
-			glm::mat4 mvp = m_Proj * m_View * model;
+			glm::mat4 mvp = projection * view * model;
 			m_Shader->Bind();
 			m_Shader->SetUniformMat4f("u_MVP", mvp);
+			m_Shader->SetUniform4f("u_Color", m_ColorA.r, m_ColorA.g, m_ColorA.b, 1.0f);
 			renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
 		}
 		{
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB);
-			glm::mat4 mvp = m_Proj * m_View * model;
+			glm::mat4 mvp = projection * view * model;
 			m_Shader->Bind();
 			m_Shader->SetUniformMat4f("u_MVP", mvp);
+			m_Shader->SetUniform4f("u_Color", m_ColorB.r, m_ColorB.g, m_ColorB.b, 1.0f);
 			renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
 		}
 	}
 
 	void TestTexture2D::OnImGuiRender()
 	{
-		// TODO : do not hard code the end value here
+		// TODO : LEFT OFF HERE - what values to use here
 		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
 		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 960.0f);
+		ImGui::ColorEdit3("Color A", (float*)&m_ColorA[0]);
+		ImGui::ColorEdit3("Color B", (float*)&m_ColorB[0]);
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}

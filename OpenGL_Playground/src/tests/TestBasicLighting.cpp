@@ -84,8 +84,6 @@ namespace test {
         m_LightPosition.y = 1.5f * sin(glfwTime);
         m_LightPosition.z = 1.5f * cos(glfwTime);
 
-        // shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
         glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
