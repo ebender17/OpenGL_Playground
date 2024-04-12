@@ -4,6 +4,9 @@
 #include <iostream>
 #include <functional>
 
+#include "glm/glm.hpp"
+#include "Camera.h"
+
 namespace test {
 
 	class Test
@@ -13,7 +16,7 @@ namespace test {
 		virtual ~Test() {}
 
 		virtual void OnUpdate(float deltaTime) {}
-		virtual void OnRender() {}
+		virtual void OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight) {}
 		virtual void OnImGuiRender() {}
 	};
 
