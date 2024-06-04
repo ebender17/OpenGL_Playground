@@ -56,6 +56,7 @@ namespace test {
         };
 
         GLCall(glEnable(GL_DEPTH_TEST));
+        m_EnableInput = true;
 
         m_LightingShader = std::make_unique<Shader>("res/shaders/BasicLighting.shader");
         m_LightCubeShader = std::make_unique<Shader>("res/shaders/LightCube.shader");
@@ -90,10 +91,8 @@ namespace test {
         glm::mat3 normalWorld = glm::mat3(1.0f);
         normalWorld = glm::transpose(glm::inverse(model));
 
-        // TODO : Pre-multiply matrices needed in shader instead of doing in shader
         m_LightingShader->Bind();
-        m_LightingShader->SetUniformMat4f("u_Projection", projection);
-        m_LightingShader->SetUniformMat4f("u_View", view);
+        m_LightingShader->SetUniformMat4f("u_ProjectionView", projection * view);
         m_LightingShader->SetUniformMat4f("u_Model", model);
         m_LightingShader->SetUniformMat3f("u_NormalWorld", normalWorld);
         m_LightingShader->SetUniformVec3f("u_ObjectColor", m_ObjectColor);
@@ -104,12 +103,10 @@ namespace test {
         renderer.Draw(*m_VAO, 0, 36, *m_LightingShader);
 
         m_LightCubeShader->Bind();
-        m_LightCubeShader->SetUniformMat4f("u_Projection", projection);
-        m_LightCubeShader->SetUniformMat4f("u_View", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, m_LightPosition);
         model = glm::scale(model, glm::vec3(0.2f));
-        m_LightCubeShader->SetUniformMat4f("u_Model", model);
+        m_LightCubeShader->SetUniformMat4f("u_MVP", projection * view * model);
         m_LightCubeShader->SetUniformVec3f("u_Color", m_LightColorA);
 
         renderer.Draw(*m_VAO, 0, 36, *m_LightCubeShader);

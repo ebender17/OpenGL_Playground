@@ -18,6 +18,10 @@ namespace test {
 		virtual void OnUpdate(float deltaTime) {}
 		virtual void OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight) {}
 		virtual void OnImGuiRender() {}
+
+		inline bool GetEnableInput() const { return m_EnableInput; }
+	protected:
+		bool m_EnableInput = false;
 	};
 
 	class TestMenu : public Test

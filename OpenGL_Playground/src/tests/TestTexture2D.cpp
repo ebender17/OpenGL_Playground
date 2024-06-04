@@ -9,7 +9,7 @@
 namespace test {
 
 	TestTexture2D::TestTexture2D()
-		: m_TranslationA(200, 200, 0), m_TranslationB(400, 200, 0), m_ColorA(1.0f, 1.0f, 1.0f), m_ColorB(1.0f, 1.0f, 1.0f)
+		: m_TranslationA(1, 1, -0.5), m_TranslationB(-1, 1, -0.5), m_ColorA(1.0f, 1.0f, 1.0f), m_ColorB(1.0f, 1.0f, 1.0f)
 	{
 		float vertices[] = {
 			-0.5f, -0.5f, 0.0f, 0.0f,
@@ -23,7 +23,6 @@ namespace test {
 			2, 3, 0
 		};
 
-		// TODO : setup parameters whether to blend or not
 		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -35,7 +34,6 @@ namespace test {
 		layout.Push<float>(2);
 		m_VAO->AddBuffer(*m_VertexBuffer, layout);
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
-
 
 		m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
 		m_Shader->Bind();
@@ -82,9 +80,8 @@ namespace test {
 
 	void TestTexture2D::OnImGuiRender()
 	{
-		// TODO : LEFT OFF HERE - what values to use here
-		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
-		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 960.0f);
+		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, -2.0f, 2.0f);
+		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, -2.0f, 2.0f);
 		ImGui::ColorEdit3("Color A", (float*)&m_ColorA[0]);
 		ImGui::ColorEdit3("Color B", (float*)&m_ColorB[0]);
 

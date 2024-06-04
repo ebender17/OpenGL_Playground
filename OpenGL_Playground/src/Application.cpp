@@ -33,6 +33,7 @@ Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
 float lastX = screenWidth / 2.0f;
 float lastY = screenHeight / 2.0f;
 bool firstMouse = true;
+bool enableInput = false;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -96,10 +97,11 @@ int main(void)
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        processInput(window);
 
         if (currentTest)
         {
+            enableInput = currentTest->GetEnableInput();
+            processInput(window);
             currentTest->OnUpdate(deltaTime);
             currentTest->OnRender(glfwGetTime(), camera, screenWidth, screenHeight);
             ImGui::Begin("Test");
@@ -133,6 +135,10 @@ int main(void)
 // TODO : Move to input class
 void processInput(GLFWwindow* window)
 {
+    if (!enableInput) {
+        return;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -155,6 +161,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
 {
+    if (!enableInput) {
+        return;
+    }
+
     float xPos = static_cast<float>(xPosIn);
     float yPos = static_cast<float>(yPosIn);
 
@@ -174,5 +184,9 @@ void mouse_callback(GLFWwindow* window, double xPosIn, double yPosIn)
 
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
 {
+    if (!enableInput) {
+        return;
+    }
+
     camera.ProcessMouseScroll(static_cast<float>(yOffset));
 }
