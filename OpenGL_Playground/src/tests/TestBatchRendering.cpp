@@ -10,15 +10,15 @@ namespace test {
 	TestBatchRendering::TestBatchRendering()
 	{
 		float vertices[] = {
-			 -1.5f, -0.5f, 0.0f,
-			 -0.5f, -0.5f, 0.0f,
-			 -0.5f,  0.5f, 0.0f,
-			 -1.5f,  0.5f, 0.0f,
+			 -1.5f, -0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
+			 -0.5f, -0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
+			 -0.5f,  0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
+			 -1.5f,  0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
 
-			 0.5f, -0.5f, 0.0f,
-			 1.5f, -0.5f, 0.0f,
-			 1.5f,  0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
+			 1.5f, -0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
+			 1.5f,  0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f
 		};
 
 		unsigned int indices[] = {
@@ -34,6 +34,7 @@ namespace test {
 		m_VertexBuffer = std::make_unique<VertexBuffer>(vertices, sizeof(vertices), GL_STATIC_DRAW);
 		VertexBufferLayout layout;
 		layout.Push<float>(3);
+		layout.Push<float>(4);
 		m_VAO->AddBuffer(*m_VertexBuffer, layout);
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
 
