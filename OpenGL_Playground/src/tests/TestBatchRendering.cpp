@@ -4,23 +4,12 @@
 #include "VertexBufferLayout.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "imgui/imgui.h"
 
 namespace test {
 
 	TestBatchRendering::TestBatchRendering()
 	{
-		float vertices[] = {
-			 -1.5f, -0.5f, 0.0f, 1.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-			 -0.5f, -0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,
-			 -0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
-			 -1.5f,  0.5f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-
-			 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			 1.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-			 1.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-		};
-
 		unsigned int indices[] = {
 			0, 1, 2, 2, 3, 0,
 			4, 5, 6, 6, 7, 4
@@ -31,7 +20,7 @@ namespace test {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		m_VAO = std::make_unique<VertexArray>();
-		m_VertexBuffer = std::make_unique<VertexBuffer>(vertices, sizeof(vertices), GL_STATIC_DRAW);
+		m_VertexBuffer = std::make_unique<VertexBuffer>(nullptr, sizeof(Vertex) * 1000, GL_DYNAMIC_DRAW);
 		VertexBufferLayout layout;
 		layout.Push<float>(3);
 		layout.Push<float>(4);
@@ -58,8 +47,48 @@ namespace test {
 
 	}
 
+	std::array<Vertex, 4> TestBatchRendering::CreateQuad(float x, float y, float textureID)
+	{
+		float size = 1.0f;
+
+		Vertex v0;
+		v0.Position = { x, y, 0.0f };
+		v0.Color = { 0.0f, 0.5f, 0.5f, 1.0f };
+		v0.TexCoords = { 0.0f, 0.0f };
+		v0.TexID = textureID;
+
+		Vertex v1;
+		v1.Position = { (x + size), y, 0.0f };
+		v1.Color = { 1.0f, 0.5f, 0.0f, 1.0f };
+		v1.TexCoords = { 1.0f, 0.0f };
+		v1.TexID = textureID;
+
+		Vertex v2;
+		v2.Position = { (x + size), (y + size), 0.0f };
+		v2.Color = { 0.5f, 1.0f, 0.5f, 1.0f };
+		v2.TexCoords = { 1.0f, 1.0f };
+		v2.TexID = textureID;
+
+		Vertex v3;
+		v3.Position = { x, (y + size), 0.0f };
+		v3.Color = { 0.0f, 0.5f, 1.0f, 1.0 };
+		v3.TexCoords = { 0.0f, 1.0f };
+		v3.TexID = textureID;
+		return std::array<Vertex, 4>({ { v0, v1, v2, v3 } });
+	}
+
 	void TestBatchRendering::OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight)
 	{
+		auto quad0 = CreateQuad(m_Quad0Position[0], m_Quad0Position[1], 0.0f);
+		auto quad1 = CreateQuad(0.5f, -0.5f, 1.0f);
+
+		Vertex vertices[8];
+		memcpy(vertices, quad0.data(), quad0.size() * sizeof(Vertex));
+		memcpy(vertices + quad0.size(), quad1.data(), quad1.size() * sizeof(Vertex));
+
+		m_VertexBuffer->Bind();
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
+
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -81,7 +110,7 @@ namespace test {
 
 	void TestBatchRendering::OnImGuiRender()
 	{
-
+		ImGui::DragFloat2("Quad0 Position", m_Quad0Position, 0.1f);
 	}
 
 }

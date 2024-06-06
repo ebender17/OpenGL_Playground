@@ -9,6 +9,15 @@
 #include "VertexBuffer.h"
 
 #include <memory>
+#include <array>
+
+struct Vertex
+{
+	glm::vec3 Position;
+	glm::vec4 Color;
+	glm::vec2 TexCoords;
+	float TexID;
+};
 
 namespace test {
 
@@ -19,6 +28,7 @@ namespace test {
 		~TestBatchRendering();
 
 		void OnUpdate(float deltaTime) override;
+		std::array<Vertex, 4> CreateQuad(float x, float y, float textureID);
 		void OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight) override;
 		void OnImGuiRender() override;
 	private:
@@ -28,6 +38,8 @@ namespace test {
 		std::unique_ptr<Shader> m_Shader;
 		std::unique_ptr<Texture> m_TextureOne;
 		std::unique_ptr<Texture> m_TextureTwo;
+
+		float m_Quad0Position[2] = { -1.5, -0.5f };
 	};
 
 }
