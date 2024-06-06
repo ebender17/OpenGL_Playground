@@ -10,15 +10,15 @@ namespace test {
 	TestBatchRendering::TestBatchRendering()
 	{
 		float vertices[] = {
-			 -1.5f, -0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
-			 -0.5f, -0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
-			 -0.5f,  0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
-			 -1.5f,  0.5f, 0.0f, 0.18f, 0.6f, 0.96f, 1.0f,
+			 -1.5f, -0.5f, 0.0f, 1.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			 -0.5f, -0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,
+			 -0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+			 -1.5f,  0.5f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
-			 1.5f, -0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
-			 1.5f,  0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 0.93f, 0.24f, 1.0f
+			 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			 1.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+			 1.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 		};
 
 		unsigned int indices[] = {
@@ -35,14 +35,17 @@ namespace test {
 		VertexBufferLayout layout;
 		layout.Push<float>(3);
 		layout.Push<float>(4);
+		layout.Push<float>(2);
+		layout.Push<float>(1);
 		m_VAO->AddBuffer(*m_VertexBuffer, layout);
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
 
 		m_Shader = std::make_unique<Shader>("res/shaders/BatchRendering.shader");
 		m_Shader->Bind();
-		// TODO
-		// m_Texture = std::make_unique<Texture>("res/textures/wooden-box.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		// m_Shader->SetUniform1i("u_Texture", 0);
+		m_TextureOne = std::make_unique<Texture>("res/textures/wooden-box.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		m_TextureTwo = std::make_unique<Texture>("res/textures/character-sprite.png", true, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		int samplers[2] = { 0, 1 };
+		m_Shader->SetUniform1iv("u_Textures", 2, samplers);
 	}
 
 	TestBatchRendering::~TestBatchRendering()
@@ -61,7 +64,8 @@ namespace test {
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		Renderer renderer;
-		// m_Texture->Bind();
+		m_TextureOne->Bind(0);
+		m_TextureTwo->Bind(1);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
@@ -71,7 +75,6 @@ namespace test {
 			glm::mat4 mvp = projection * view * model;
 			m_Shader->Bind();
 			m_Shader->SetUniformMat4f("u_MVP", mvp);
-			// m_Shader->SetUniform4f("u_Color", m_ColorA.r, m_ColorA.g, m_ColorA.b, 1.0f);
 			renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
 		}
 	}
