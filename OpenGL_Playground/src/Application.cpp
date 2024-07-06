@@ -20,6 +20,7 @@
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 #include "tests/TestBasicLighting.h"
+#include "tests/TestBatchRendering.h"
 
 unsigned int screenWidth = 800;
 unsigned int screenHeight = 600;
@@ -70,7 +71,7 @@ int main(void)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    const char* glsl_version = "#version 330";
+    const char* glsl_version = "#version 450";
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::StyleColorsDark();
 
@@ -84,6 +85,7 @@ int main(void)
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
     testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
     testMenu->RegisterTest<test::TestBasicLighting>("Basic Lighting");
+    testMenu->RegisterTest<test::TestBatchRendering>("Batch Rendering");
 
     while (!glfwWindowShouldClose(window))
     {
