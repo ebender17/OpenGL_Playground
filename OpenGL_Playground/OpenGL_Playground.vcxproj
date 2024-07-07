@@ -183,12 +183,16 @@
     <ClCompile Include="src\tests\TestTexture2D.cpp" />
     <ClCompile Include="src\tests\TestBasicLighting.cpp" />
     <ClCompile Include="src\tests\TestBatchRendering.cpp" />
+    <ClCompile Include="src\tests\TestTexture2DNonAPI.cpp" />
+    <ClCompile Include="src\tests\TestBasicLightingNonAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BasicLighting.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="res\shaders\LightCube.shader" />
+    <None Include="res\shaders\PhongLighting.shader" />
+    <None Include="res\shaders\Texture2D.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
@@ -331,6 +335,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\GLErrorManager.h" />
+    <ClInclude Include="src\ObjectProperties.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Display.h" />
     <ClInclude Include="src\IndexBuffer.h" />
@@ -642,6 +647,8 @@
     <ClInclude Include="src\tests\TestTexture2D.h" />
     <ClInclude Include="src\tests\TestBasicLighting.h" />
     <ClInclude Include="src\tests\TestBatchRendering.h" />
+    <ClInclude Include="src\tests\TestTexture2DNonAPI.h" />
+    <ClInclude Include="src\tests\TestBasicLightingNonAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\character-sprite.png" />

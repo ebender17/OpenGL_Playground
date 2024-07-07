@@ -87,6 +87,12 @@
     <ClCompile Include="src\tests\TestBatchRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\TestTexture2DNonAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\TestBasicLightingNonAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -507,6 +513,8 @@
     <None Include="res\shaders\LightCube.shader" />
     <None Include="res\shaders\BasicLighting.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
+    <None Include="res\shaders\Texture2D.shader" />
+    <None Include="res\shaders\PhongLighting.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -1446,6 +1454,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\TestBatchRendering.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\TestTexture2DNonAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\TestBasicLightingNonAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ObjectProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
