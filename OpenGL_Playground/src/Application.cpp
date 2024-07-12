@@ -18,8 +18,8 @@
 
 #include "tests/Test.h"
 #include "tests/TestClearColor.h"
-#include "tests/TestTexture2D.h"
-#include "tests/TestBasicLighting.h"
+#include "tests/TestTexture2DNonAPI.h"
+#include "tests/TestBasicLightingNonAPI.h"
 #include "tests/TestBatchRendering.h"
 
 unsigned int screenWidth = 800;
@@ -83,8 +83,8 @@ int main(void)
     currentTest = testMenu;
 
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-    testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
-    testMenu->RegisterTest<test::TestBasicLighting>("Basic Lighting");
+    testMenu->RegisterTest<test::TestTexture2DNonAPI>("Texture 2D");
+    testMenu->RegisterTest<test::TestBasicLightingNonAPI>("Basic Lighting");
     testMenu->RegisterTest<test::TestBatchRendering>("Batch Rendering");
 
     while (!glfwWindowShouldClose(window))
