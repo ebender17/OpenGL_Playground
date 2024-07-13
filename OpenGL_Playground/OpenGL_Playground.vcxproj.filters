@@ -93,6 +93,9 @@
     <ClCompile Include="src\tests\TestBasicLightingNonAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\TestLightingMapsNonAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -515,6 +518,7 @@
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="res\shaders\Texture2D.shader" />
     <None Include="res\shaders\PhongLighting.shader" />
+    <None Include="res\shaders\LightingMaps.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -1465,12 +1469,24 @@
     <ClInclude Include="src\ObjectProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\tests\TestLightingMapsNonAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\character-sprite.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\wooden-box.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wooden-box-diffuse.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wooden-box-emissive.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\wooden-box-specular.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

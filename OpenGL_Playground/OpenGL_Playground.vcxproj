@@ -185,12 +185,14 @@
     <ClCompile Include="src\tests\TestBatchRendering.cpp" />
     <ClCompile Include="src\tests\TestTexture2DNonAPI.cpp" />
     <ClCompile Include="src\tests\TestBasicLightingNonAPI.cpp" />
+    <ClCompile Include="src\tests\TestLightingMapsNonAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\BasicLighting.shader" />
     <None Include="res\shaders\BatchRendering.shader" />
     <None Include="res\shaders\LightCube.shader" />
+    <None Include="res\shaders\LightingMaps.shader" />
     <None Include="res\shaders\PhongLighting.shader" />
     <None Include="res\shaders\Texture2D.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
@@ -649,9 +651,13 @@
     <ClInclude Include="src\tests\TestBatchRendering.h" />
     <ClInclude Include="src\tests\TestTexture2DNonAPI.h" />
     <ClInclude Include="src\tests\TestBasicLightingNonAPI.h" />
+    <ClInclude Include="src\tests\TestLightingMapsNonAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\character-sprite.png" />
+    <Image Include="res\textures\wooden-box-diffuse.png" />
+    <Image Include="res\textures\wooden-box-emissive.png" />
+    <Image Include="res\textures\wooden-box-specular.png" />
     <Image Include="res\textures\wooden-box.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

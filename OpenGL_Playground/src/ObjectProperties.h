@@ -2,17 +2,32 @@
 
 #include "glm/glm.hpp"
 
-struct Material
+struct MaterialFlatColor
 {
 	glm::vec3 Ambient;
 	glm::vec3 Diffuse;
 	glm::vec3 Specular;
 	float Shininess;
 
-	Material() = default;
+	MaterialFlatColor() = default;
 
-	Material(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess)
+	MaterialFlatColor(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess)
 		: Ambient(ambient), Diffuse(diffuse), Specular(specular), Shininess(shininess)
+	{
+	}
+};
+
+struct MaterialTextures
+{
+	unsigned int Diffuse;
+	unsigned int Specular;
+	unsigned int Emissive;
+	float Shininess;
+
+	MaterialTextures() = default;
+
+	MaterialTextures(unsigned int diffuse, unsigned int specular, unsigned int emissive, float shininess)
+		: Diffuse(diffuse), Specular(specular), Emissive(emissive), Shininess(shininess)
 	{
 	}
 };

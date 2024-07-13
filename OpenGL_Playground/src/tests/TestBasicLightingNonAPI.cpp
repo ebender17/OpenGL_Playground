@@ -1,7 +1,6 @@
 #include "TestBasicLightingNonAPI.h"
 
 #include "Renderer.h"
-#include "VertexBufferLayout.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "imgui/imgui.h"
@@ -81,7 +80,7 @@ namespace test {
             glm::vec3(1.0f, 1.0f, 1.0f)
         );
 
-        m_ObjectMaterial = Material(
+        m_ObjectMaterial = MaterialFlatColor(
             glm::vec3(0.0f, 0.1f, 0.06f),
             glm::vec3(0.0f, 0.50980392f, 0.50980392f),
             glm::vec3(0.50196078f, 0.50196078f, 0.50196078f),
@@ -101,8 +100,6 @@ namespace test {
 
     void TestBasicLightingNonAPI::OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight)
     {
-        Renderer renderer;
-
         m_LightPosition.y = 1.5f * sin(glfwTime);
         m_LightPosition.z = 1.5f * cos(glfwTime);
 

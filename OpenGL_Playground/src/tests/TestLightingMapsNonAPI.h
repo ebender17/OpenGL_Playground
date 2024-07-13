@@ -5,15 +5,13 @@
 #include "Shader.h"
 #include "ObjectProperties.h"
 
-#include <memory>
-
 namespace test {
 
-	class TestBasicLightingNonAPI : public Test
+	class TestLightingMapsNonAPI : public Test
 	{
 	public:
-		TestBasicLightingNonAPI();
-		~TestBasicLightingNonAPI();
+		TestLightingMapsNonAPI();
+		~TestLightingMapsNonAPI();
 
 		void OnUpdate(float deltaTime) override;
 		void OnRender(double glfwTime, const Camera& camera, float screenWidth, float screenHeight) override;
@@ -25,7 +23,7 @@ namespace test {
 
 		glm::mat4 m_Proj, m_View;
 		glm::vec3 m_LightPosition;
-		MaterialFlatColor m_ObjectMaterial;
+		MaterialTextures m_ObjectMaterial;
 		Light m_Light;
 	};
 

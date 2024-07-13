@@ -21,6 +21,7 @@
 #include "tests/TestTexture2DNonAPI.h"
 #include "tests/TestBasicLightingNonAPI.h"
 #include "tests/TestBatchRendering.h"
+#include "tests/TestLightingMapsNonAPI.h";
 
 unsigned int screenWidth = 800;
 unsigned int screenHeight = 600;
@@ -85,6 +86,7 @@ int main(void)
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
     testMenu->RegisterTest<test::TestTexture2DNonAPI>("Texture 2D");
     testMenu->RegisterTest<test::TestBasicLightingNonAPI>("Basic Lighting");
+    testMenu->RegisterTest<test::TestLightingMapsNonAPI>("Lighting Maps");
     testMenu->RegisterTest<test::TestBatchRendering>("Batch Rendering");
 
     while (!glfwWindowShouldClose(window))
